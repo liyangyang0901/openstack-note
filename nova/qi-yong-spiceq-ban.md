@@ -172,12 +172,66 @@ class ServerConnectinfoController(wsgi.Controller):
             raise exc.HTTPNotFound(explanation=msg)
 ```
 
-1. 在entry\_points.txt中`nova/api/openstack/compute/routers.py`注册API
+1. 在`nova/api/openstack/compute/routers.py`注册API
 
 ```text
-server_connectinfo.ServerConnectinfoController,
+from nova.api.openstack.compute import server_connectinfo
 
-server_server_connectinfo_controller = functools.partial(_create_controller,
-    server_connectinfo.ServerConnectinfoController, [], [])
+
+server_controller = functools.partial(_create_controller,
+    servers.ServersController,
+    [
+        config_drive.ConfigDriveController,
+        extended_availability_zone.ExtendedAZController,
+        extended_server_attributes.ExtendedServerAttributesController,
+        extended_status.ExtendedStatusController,
+        extended_volumes.ExtendedVolumesController,
+        hide_server_addresses.Controller,
+        keypairs.Controller,
+        security_groups.SecurityGroupsOutputController,
+        server_usage.ServerUsageController,
+    ],
+    [
+        admin_actions.AdminActionsController,
+        admin_password.AdminPasswordController,
+        console_output.ConsoleOutputController,
+        create_backup.CreateBackupController,
+        deferred_delete.DeferredDeleteController,
+        evacuate.EvacuateController,
+        floating_ips.FloatingIPActionController,
+        lock_server.LockServerController,
+        migrate_server.MigrateServerController,
+        multinic.MultinicController,
+        pause_server.PauseServerController,
+        remote_consoles.RemoteConsolesController,
+        rescue.RescueController,
+        security_groups.SecurityGroupActionController,
+        shelve.ShelveController,
+        suspend_server.SuspendServerController,
+        server_connectinfo.ServerConnectinfoController,
+    
+    ]
+)
+```
+
+### 验证控制节点API
+
+#### 先获取token
+
+{% page-ref page="../keystone/ming-ling-hang-huo-qu-token.md" %}
+
+
+
+#### 请求连接方式
+
+```text
+
+  curl -XPOST \
+  --url http://{nova-compute-api-endpoint}/v2.1/servers/e691fe62-62c9-4d0b-8420-a8d0227b518e/action \
+  --header 'cache-control: no-cache' \
+  --header 'content-type: application/json' \
+  --header 'postman-token: 4d0f56ee-83a4-742c-9b0d-3403d44bb49e' \
+  --header 'x-auth-token: gAAAAABfDGVZ_Wiwb2Mr5EVluJyDrFEhH4D0rAxNBDKUGx6sF37-88P8j2MWgUVK6hzjz-0jNfFoNfqyZEqooj2aEXAq3Zj9x2Q4jEYQXdgMF_PuhqWEgSVNOodePe6SGcgI4EqV4d2dR5EWvr92kUsVLLKsmuEmVNvskFdzwoho5f0hAx3pgT4' \
+  --data '{ "os-getServerConnectinfo": {     "protocol": "spice",     "type": "spice-html5" }}'
 ```
 

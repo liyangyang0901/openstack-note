@@ -10,7 +10,7 @@
 
 ```text
 curl -XPOST -i \
-  --url http://ip:port/v3/auth/tokens \
+  --url http://{keystone-endpoint}/v3/auth/tokens \
   --header 'content-type: application/json' \
   --data '{"auth": {"identity": {"methods": ["password"],"password": {"user": {"name": "admin","domain": {"name": "Default"},"password": "xxx"}}},"scope": {"project": {"domain": {"id": "default"},"name": "admin"}}}}'
 ```
